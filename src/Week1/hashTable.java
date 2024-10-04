@@ -1,5 +1,8 @@
 package Week1;
 
+import java.util.LinkedList;
+import java.util.List;
+
 class Pair {
     String key;
     String value;
@@ -12,49 +15,66 @@ class Pair {
 
 public class hashTable {
     private static final int SIZE = 10;  // Size of the table
-    private final Pair[] table;  // Array to store key-value pairs
+    private final List<Pair>[] table;  // Array to store key-value pairs
 
     public hashTable() {
-        table = new Pair[SIZE];  // Initialize the array
+        table = new LinkedList[SIZE];  // Initialize the array
+        for (int i=0; i < SIZE; i++){
+            table[i] = new LinkedList<>(); //Initialise each bucket with an empty list
+        }
     }
 
     // Simple hash function
     private int hash(String key) {
-        int hashCode = 0;
+        int hash = 0;
+        int R = 31; //Prime number used in hashing
         for (int i = 0; i < key.length(); i++) {
-            hashCode += key.charAt(i);
+            hash = (R * hash + key.charAt(i)) % SIZE;
         }
-        return hashCode % SIZE;
+        return hash;
     }
 
     // Insert operation
     public void insert(String key, String value) {
         int index = hash(key);  // Get hash index
-        table[index] = new Pair(key, value);  // Store the key-value pair
+        List<Pair> bucket = table[index]; //Get the bucket at index
+
+        //Check if key already exists, update value if it does
+        for (Pair thePair : bucket) {
+            if (thePair.key.equals(key)) {
+                thePair.value = value; //Update existing value
+                return;
+            }
+        }
+
+        //If key does not exist, add new pair to bucket
+        bucket.add(new Pair(key, value));
     }
 
     // Get operation
     public String get(String key) {
         int index = hash(key);  // Get hash index
-        Pair pair = table[index];  // Get the pair at that index
+        List<Pair> bucket = table[index]; //Get the bucket at index
 
-        if (pair != null && pair.key.equals(key)) {
-            return pair.value;  // Return the associated value if the key matches
+        //Search for the key in the list
+        for (Pair thePair : bucket) {
+            if (thePair.key.equals(key)) {
+                return thePair.value; //Return the associated value if key matches
+            }
         }
-        return null;  // Return null if no match is found
+        return null; //Return null if no match found
     }
 
     // Remove operation
     public void remove(String key) {
         int index = hash(key);  // Get hash index
-        Pair pair = table[index];  // Get the pair at that index
+        List<Pair> bucket = table[index]; //Get the bucket at index
 
-        // If the pair exists and the key matches, remove it by setting the array element to null
-        if (pair != null && pair.key.equals(key)) {
-            table[index] = null;  // Remove the pair
-            System.out.println("Key " + key + " removed.");
-        } else {
-            System.out.println("Key " + key + " not found.");
+        for (Pair thePair : bucket) {
+            if (thePair.key.equals(key)) {
+                bucket.remove(thePair); //Remove the (k, v) pair from list
+                return;
+            }
         }
     }
 
@@ -72,8 +92,8 @@ public class hashTable {
         // Try getting the removed key
         System.out.println(map.get("name"));  // Output: null (because it was removed)
 
-        // Remove non-existing key
-        map.remove("country");  // Output: Key country not found.
+        //Remove a non-existing key
+        map.remove("AAHHH");
     }
 }
 
