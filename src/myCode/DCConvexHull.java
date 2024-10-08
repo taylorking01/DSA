@@ -100,50 +100,89 @@ public class DCConvexHull {
     // This is the "conquer" and "combine" part of convex hull divide & conquer.
     // It has some similarities with merge(), but there are big differences too.
     public static LinkedList<Point> merge_disjoint_lower_hulls(LinkedList<Point> left, LinkedList<Point> right) {
-        // Tighten the bridge:
+        // Tighten the bridge between left and right hulls
 
-        ///////////////////////////////////////////////////////////////////////
-        // SUBTASK 1: MERGE - ~17 lines of code needed                       //
-        ///////////////////////////////////////////////////////////////////////
+        // Adjust the left hull
+        while (left.size() >= 2) {
+            Point p1 = left.get(left.size() - 2); // Second-to-last point of left hull
+            Point p2 = left.getLast();            // Last point of left hull
+            Point p3 = right.getFirst();          // First point of right hull
 
+            if (clockwise(p1, p2, p3)) {
+                left.removeLast(); // Remove p2 if it forms a clockwise turn
+            } else {
+                break; // Stop when we no longer have a clockwise turn
+            }
+        }
 
+        // Adjust the right hull
+        while (right.size() >= 2) {
+            Point p1 = left.getLast();   // Last point of left hull
+            Point p2 = right.getFirst(); // First point of right hull
+            Point p3 = right.get(1);     // Second point of right hull
 
-        // Concatenate the remaining points from both.
-        LinkedList<Point> hull = new LinkedList<Point>(left);
+            if (clockwise(p1, p2, p3)) {
+                right.removeFirst(); // Remove p2 if it forms a clockwise turn
+            } else {
+                break; // Stop when we no longer have a clockwise turn
+            }
+        }
+
+        // Concatenate the remaining points from both hulls
+        LinkedList<Point> hull = new LinkedList<>(left);
         hull.addAll(right);
+
+        // Ensure that the points in the hull are in proper order (sorted by x)
+        // Use the built-in sorting, assuming compareTo works as intended for Point
+        Collections.sort(hull);
+
         return hull;
     }
 
     // This is the "divide" part of convex hull divide & conquer.
     // It should look like very similar to merge_sort().
     public static LinkedList<Point> lower_hull(LinkedList<Point> ps) {
-
-        ///////////////////////////////////////////////////////////////////////
-        // SUBTASK 2: DIVIDE & CONQUER - ~6 lines of code needed             //
-        ///////////////////////////////////////////////////////////////////////
-
-        return null; // Delete this line when you start the task.
-    }
-
-    // This method calculates the upper and lower hull separately, then joins them.
-    public static LinkedList<Point> upper_lower_hull(LinkedList<Point> ps) {
-
-        // 2 points are already a convex hull.
+        // Base case: if 2 or fewer points, they form a convex hull.
         if (ps.size() <= 2) {
             return ps;
         }
 
-        LinkedList<Point> upper = new LinkedList<Point>(ps);
-        LinkedList<Point> lower = new LinkedList<Point>(ps);
+        // Split the points into two halves
+        LinkedList<Point> left = split(ps);
 
-        // Do lower hull.
-        lower = lower_hull(lower);
+        // Recursively compute the lower hulls for both halves.
+        LinkedList<Point> leftHull = lower_hull(left);
+        LinkedList<Point> rightHull = lower_hull(ps);
 
-        ///////////////////////////////////////////////////////////////////////
-        // SUBTASK 3: UPPER CONVEX HULL - ~12 lines of code needed           //
-        ///////////////////////////////////////////////////////////////////////
+        // Merge the two halves to form the complete lower hull.
+        return merge_disjoint_lower_hulls(leftHull, rightHull);
+    }
 
 
+    // This method calculates the upper and lower hull separately, then joins them.
+    public static LinkedList<Point> upper_lower_hull(LinkedList<Point> ps) {
+        if (ps.size() <= 2) {
+            return ps;
+        }
+
+        // Calculate lower hull
+        LinkedList<Point> lower = lower_hull(new LinkedList<>(ps));
+
+        // Flip all points to calculate the upper hull
+        for (Point p : ps) {
+            p.flip();
+        }
+
+        // Calculate upper hull (using lower_hull on flipped points)
+        LinkedList<Point> upper = lower_hull(new LinkedList<>(ps));
+
+        // Flip points back
+        for (Point p : ps) {
+            p.flip();
+        }
+
+        // Combine lower and upper hulls
+        lower.addAll(upper);
 
         return lower;
     }
@@ -236,10 +275,10 @@ public class DCConvexHull {
     // Test the algorithms with some fixed tests and random data.
     public static void main(String args[]) {
         // TASK 2: If you gave up on Task 1, comment out the next 4 lines.
-        test_merge();
-        System.out.printf("Testing Task 1.1 complete.%n%n");
-        test_merge_sort();
-        System.out.printf("Testing Task 1.2 complete.%n%n");
+        //test_merge();
+        //System.out.printf("Testing Task 1.1 complete.%n%n");
+        //test_merge_sort();
+        //System.out.printf("Testing Task 1.2 complete.%n%n");
 
         test_merge_disjoint_lower_hulls();
         System.out.printf("Testing Task 2.1 complete.%n%n");
