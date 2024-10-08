@@ -1,4 +1,4 @@
-package Week1;
+package myCode;
 
 public class dutchNationalFlag {
     public static void partition(int[] A, int m) {

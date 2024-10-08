@@ -1,4 +1,4 @@
-package Week1;
+package myCode;
 
 public class bubbleSortList {
 	private int[] list; //An array to store list of ints
