@@ -72,3 +72,8 @@ public class quicksortByKeringhanRichie {
         System.out.println("All tests passed successfully!");
     }
 }
+
+/**
+ * This algorithm differs from the one given in lectures because the pivot is selected between the left and right element essentially.
+ * This is not a bad way of choosing the pivot however there are better methods.
+ */
