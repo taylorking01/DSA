@@ -382,4 +382,3 @@ class ConvexHullPlot extends Frame {
 
     }
 }
-
