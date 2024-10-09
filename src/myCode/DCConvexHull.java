@@ -168,19 +168,22 @@ public class DCConvexHull {
             return ps;
         }
 
-        // Calculate lower hull
+        // Create a copy of ps before calculating lower hull
+        LinkedList<Point> originalPoints = new LinkedList<>(ps);
+
+        // Calculate lower hull (modify a copy of ps, not the original)
         LinkedList<Point> lower = lower_hull(new LinkedList<>(ps));
 
-        // Flip all points to calculate the upper hull
-        for (Point p : ps) {
+        // Flip all points in the original list (not the modified one)
+        for (Point p : originalPoints) {
             p.flip();
         }
 
-        // Calculate upper hull (using lower_hull on flipped points)
-        LinkedList<Point> upper = lower_hull(new LinkedList<>(ps));
+        // Calculate upper hull using the flipped original points
+        LinkedList<Point> upper = lower_hull(new LinkedList<>(originalPoints));
 
-        // Flip points back
-        for (Point p : ps) {
+        // Flip points back in the original list
+        for (Point p : originalPoints) {
             p.flip();
         }
 
