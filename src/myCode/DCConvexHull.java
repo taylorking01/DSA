@@ -100,41 +100,44 @@ public class DCConvexHull {
     // This is the "conquer" and "combine" part of convex hull divide & conquer.
     // It has some similarities with merge(), but there are big differences too.
     public static LinkedList<Point> merge_disjoint_lower_hulls(LinkedList<Point> left, LinkedList<Point> right) {
-        // Tighten the bridge between left and right hulls
+        boolean changesMade; //Tracks if changes made during current iteration
 
-        // Adjust the left hull
-        while (left.size() >= 2) {
-            Point p1 = left.get(left.size() - 2); // Second-to-last point of left hull
-            Point p2 = left.getLast();            // Last point of left hull
-            Point p3 = right.getFirst();          // First point of right hull
+        do {
+            changesMade = false; //Set changes made to false initially
 
-            if (clockwise(p1, p2, p3)) {
-                left.removeLast(); // Remove p2 if it forms a clockwise turn
-            } else {
-                break; // Stop when we no longer have a clockwise turn
+            // Adjust the left hull
+            while (left.size() >= 2) {
+                Point p1 = left.get(left.size() - 2); // Second-to-last point of left hull
+                Point p2 = left.getLast();            // Last point of left hull
+                Point p3 = right.getFirst();          // First point of right hull
+
+                if (clockwise(p1, p2, p3)) {
+                    left.removeLast();  // Remove p2 if it forms a clockwise turn
+                    changesMade = true; // Mark that a change was made
+                } else {
+                    break; // Stop when no more clockwise turn
+                }
             }
-        }
 
-        // Adjust the right hull
-        while (right.size() >= 2) {
-            Point p1 = left.getLast();   // Last point of left hull
-            Point p2 = right.getFirst(); // First point of right hull
-            Point p3 = right.get(1);     // Second point of right hull
+            // Adjust the right hull
+            while (right.size() >= 2) {
+                Point p1 = left.getLast();   // Last point of left hull
+                Point p2 = right.getFirst(); // First point of right hull
+                Point p3 = right.get(1);     // Second point of right hull
 
-            if (clockwise(p1, p2, p3)) {
-                right.removeFirst(); // Remove p2 if it forms a clockwise turn
-            } else {
-                break; // Stop when we no longer have a clockwise turn
+                if (clockwise(p1, p2, p3)) {
+                    right.removeFirst();  // Remove p2 if it forms a clockwise turn
+                    changesMade = true;   // Mark that a change was made
+                } else {
+                    break; // Stop when no more clockwise turn
+                }
             }
-        }
+
+        } while (changesMade); // Repeat until no more changes are made
 
         // Concatenate the remaining points from both hulls
         LinkedList<Point> hull = new LinkedList<>(left);
         hull.addAll(right);
-
-        // Ensure that the points in the hull are in proper order (sorted by x)
-        // Use the built-in sorting, assuming compareTo works as intended for Point
-        Collections.sort(hull);
 
         return hull;
     }
