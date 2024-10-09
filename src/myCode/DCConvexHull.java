@@ -284,10 +284,10 @@ public class DCConvexHull {
     // Test the algorithms with some fixed tests and random data.
     public static void main(String args[]) {
         // TASK 2: If you gave up on Task 1, comment out the next 4 lines.
-        //test_merge();
-        //System.out.printf("Testing Task 1.1 complete.%n%n");
-        //test_merge_sort();
-        //System.out.printf("Testing Task 1.2 complete.%n%n");
+        test_merge();
+        System.out.printf("Testing Task 1.1 complete.%n%n");
+        test_merge_sort();
+        System.out.printf("Testing Task 1.2 complete.%n%n");
 
         test_merge_disjoint_lower_hulls();
         System.out.printf("Testing Task 2.1 complete.%n%n");
