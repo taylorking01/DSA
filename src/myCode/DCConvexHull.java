@@ -187,6 +187,9 @@ public class DCConvexHull {
             p.flip();
         }
 
+        // Reverse the upper hull so it goes from right to left
+        Collections.reverse(upper); // This ensures the upper hull points are ordered correctly
+
         // Combine lower and upper hulls
         lower.addAll(upper);
 
